@@ -1,6 +1,11 @@
-from logging import Logger
+import logging
 
-class FuzzLogger(Logger):
 
+class FuzzLogger(logging.Logger):
+
+    def trace(self, msg, *args, **kwargs):
+        self.log(5, msg, *args, **kwargs)
     def __init__(self) -> None:
-        super().__init__()
+        # TODO this isn't right
+        super().__init__(self)
+        

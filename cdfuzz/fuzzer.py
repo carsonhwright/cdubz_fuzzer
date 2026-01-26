@@ -4,14 +4,19 @@ import random
 import inspect
 # TODO traceback is certainly going to be necessary
 import traceback
+import logging
+from pathlib import Path
 
 from test_objects.test_me import main as tme
 from fuzz_logger import FuzzLogger
+from utils import Perturbator
 
 
 
 ITER_SIZE = 10
+TRACE_LEN = 10
 INT_MAX = 2**100 - 1
+LOG_FP = "wungus.log"
 
 def fuzz_int(fuzz_range: tuple=(-INT_MAX, INT_MAX)):
     get_rand = lambda x, y: [random.randint(x, y) for i in range(ITER_SIZE)] 
@@ -28,26 +33,28 @@ def main(func: callable = print, *args, **kwargs):
 
     new_args = []
     
-    # TODO this is throwing missing argument errors __name__ or something
-    # logger = FuzzLogger("Wunk")
+    logger = logging.getLogger(__name__)
+    if Path(LOG_FP).exists():
+        with open(LOG_FP, "w") as f:
+            f.write("")
+    logging.basicConfig(filename="wungus.log", level=logging.INFO)
 
     for arg in args:
         # TODO how can this be expanded and included?
         sig = inspect.signature(arg)
-        breakpoint()
         if not callable(arg):
             raise TypeError(f"Passed an argument: {arg} which was " \
                             "not callable")
         new_args.append(arg())
     new_args = tuple(new_args)
-    try:
-        # here the iterator/perturbator needs to be
-        func(*new_args)
-    except Exception as e:
-        print(f"Do logging, exception was {e} see traceback: "\
-              f"{traceback.print_exc()}")
-        # logger.warning(f"Logged!: {e}")
-    breakpoint()
+
+    perturb = Perturbator(*new_args)
+    for inst in perturb:
+        try:
+            func(*inst)
+        except Exception as e:
+            breakpoint()
+            logger.info(f"Logged!: {e}\n TRACE:\n{traceback.format_exc(TRACE_LEN)}")
 
 if __name__ == "__main__":
-    main(tme, fuzz_int)
+    main(tme, fuzz_int, fuzz_int)
