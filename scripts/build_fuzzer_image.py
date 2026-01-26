@@ -7,7 +7,7 @@ import argparse
 
 
 def main(path: None, token: None):
-    """makes sys call for development container build
+    """makes sys call for development container build, needs github access token
 
     Params
     ------
