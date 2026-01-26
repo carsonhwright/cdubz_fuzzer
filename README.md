@@ -1,4 +1,6 @@
 # cdubz_fuzzer
 Fuzz tester for whatever
 
-Use it at home or don't
+#### TODO's
+inspect - https://docs.python.org/3/library/inspect.html#module-inspect
+    new types: MappingProxyType, OrdreredDict
