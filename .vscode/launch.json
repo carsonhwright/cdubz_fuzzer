@@ -1,0 +1,12 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "fuzzer-main",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "cdfuzz/fuzzer.py",
+            "console": "integratedTerminal"
+        }
+    ]
+}

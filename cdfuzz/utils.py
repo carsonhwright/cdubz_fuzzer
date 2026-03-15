@@ -1,4 +1,6 @@
-class Perturbator():
+
+
+class Permutator():
     def __init__(self, *args, **kwargs):
         self.generate_args(*args)
     
@@ -42,9 +44,8 @@ class Perturbator():
         try:
             for idx in range(len(indices)):
                 ret.append(self.arg_array[idx]['val'][indices[idx]])
-        except:
-            # TODO do something
-            breakpoint()
+        except IndexError as e:
+            raise e("Something has failed with index values in the permutator")
         return ret
 
 class IrregularLittleEndianInt():
@@ -63,9 +64,8 @@ class IrregularLittleEndianInt():
             idx = 0
             while True:
                 self.value[idx] += 1
-                if self.value[idx] % self.bases[0] == 0:
-                    # breakpoint()
-                    self.value[0] = 0
+                if self.value[idx] % self.bases[idx] == 0:
+                    self.value[idx] = 0
                     if idx + 1 == len(self.bases) and (self.value[idx]) % self.bases[-1] == 0:
                         self.overflow = True
                         break
