@@ -1,0 +1,13 @@
+{
+    "fuzz_str" : {
+        "max_str_len"   : 40, 
+        "min_str_len"   : 15, 
+        "delim_range"   : 3, 
+        "std_dev"       : 0.5,
+        "junk_kwarg"    : "ellemeno P"
+    },
+    "fuzz_int" : {
+        "fuzz_range" : [-1e10,1e10]
+    }
+
+}

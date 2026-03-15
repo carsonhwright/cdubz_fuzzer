@@ -31,9 +31,7 @@ class Permutator():
         # breakpoint()
         self.irreg_int = IrregularLittleEndianInt([x["base"] for x in temp])
         self.arg_array = temp
-        self.max_val = 1
-        for arg in self.arg_array:
-            self.max_val *= len(arg)
+        
 
     def get_args(self):
         """Each set of arguments is a 'digit' with a unique 'base',
@@ -54,6 +52,14 @@ class IrregularLittleEndianInt():
         self.bases = l_bases
         self.value = [0] * len(l_bases)
         self.overflow = False
+        
+        # Multiplicative identity baybeee!
+        self.max_val = 1
+        for base in self.bases:
+            self.max_val *= base
+        # can't actually acheive full multiples of all the bases 
+        # without another digit
+        self.max_val -= 1
     
     def __iadd__(self, other: int):
         if isinstance(other, int):

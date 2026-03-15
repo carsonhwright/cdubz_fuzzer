@@ -1,5 +1,6 @@
 from builtins import callable
 import string
+import json
 import random
 # TODO this inspect stuff proposes some interesting stuff, I need to look into this more
 import inspect
@@ -18,13 +19,16 @@ TRACE_LEN = 10
 INT_MAX = 2**100 - 1
 LOG_FP = "wungus.log"
 
-def fuzz_int(fuzz_range: tuple=(-INT_MAX, INT_MAX)):
+with open(Path("cdfuzz/config/configs.json"), 'r') as f:
+    CONFIG_JSON = json.load(f)
+
+
+def fuzz_int(fuzz_range: tuple=(-INT_MAX, INT_MAX), **kwargs):
     get_rand = lambda x, y: [random.randint(x, y) for i in range(ITER_SIZE)] 
     return get_rand(*fuzz_range)
 
-def fuzz_str(max_str_len: int, min_str_len: int, delim_range: int, std_dev: float):
-    """
-    Makes up random strings, 
+def fuzz_str(max_str_len: int, min_str_len: int, delim_range: int, std_dev: float, **kwargs):
+    """Makes up random strings, 
     TODO need to figure out how to let `main`'s `new_args.append(arg())` make this work, failing on missing params error
 
     :param max_str_len: the longest a string is allowed to be
@@ -42,12 +46,13 @@ def fuzz_str(max_str_len: int, min_str_len: int, delim_range: int, std_dev: floa
     char_set = string.printable
     max_char = len(char_set)
     ret = []
-    for _ in range(ITER_SIZE):
+    for _ in range(32):
         # TODO something with min/max str len being randomized, set to 
         # range being iter'd below
         next_str = ""
         for _i in range(max_str_len):
-            next_str += char_set[random.randint(0, max_char)]
+            # TODO do something with delims
+            next_str += char_set[random.randint(0, max_char-1)]
         ret.append(next_str)
     return tuple(ret)
 
@@ -76,7 +81,8 @@ def main(func: callable = print, *args, **kwargs):
         if not callable(arg):
             raise TypeError(f"Passed an argument: {arg} which was " \
                             "not callable")
-        new_args.append(arg())
+        
+        new_args.append(arg(**CONFIG_JSON.get(arg.__name__)))
     new_args = tuple(new_args)
 
     perturb = Permutator(*new_args)
